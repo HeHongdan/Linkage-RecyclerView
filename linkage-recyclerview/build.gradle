@@ -1,13 +1,11 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
-
+//apply plugin: 'com.novoda.bintray-release'
 
 //
 def theVersionName = "2.3.5"
 
 android {
-    compileSdkVersion 29
-
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 15
@@ -27,12 +25,12 @@ android {
     }
 }
 
-tasks.withType(Javadoc) {
-    options.addStringOption('Xdoclint:none', '-quiet')
-    options.addStringOption('encoding', 'UTF-8')
-    options.addStringOption('charSet', 'UTF-8')
-    options.encoding = 'UTF-8'
-}
+//tasks.withType(Javadoc) {
+//    options.addStringOption('Xdoclint:none', '-quiet')
+//    options.addStringOption('encoding', 'UTF-8')
+//    options.addStringOption('charSet', 'UTF-8')
+//    options.encoding = 'UTF-8'
+//}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -47,14 +45,14 @@ dependencies {
 }
 
 
-publish {
-    userOrg = 'recyclerview-family'
-    repoName = 'maven'
-    groupId = 'com.kunminx.linkage'
-    artifactId = 'linkage-recyclerview'
-    publishVersion = theVersionName
-    desc = 'An double level linkage RecyclerView'
-    licences = ['Apache-2.0']
-    website = 'https://github.com/KunMinX/LinkageRecyclerView'
-}
+//publish {
+//    userOrg = 'recyclerview-family'
+//    repoName = 'maven'
+//    groupId = 'com.kunminx.linkage'
+//    artifactId = 'linkage-recyclerview'
+//    publishVersion = theVersionName
+//    desc = 'An double level linkage RecyclerView'
+//    licences = ['Apache-2.0']
+//    website = 'https://github.com/KunMinX/LinkageRecyclerView'
+//}
 
