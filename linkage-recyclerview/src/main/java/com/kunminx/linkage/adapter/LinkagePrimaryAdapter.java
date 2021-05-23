@@ -31,17 +31,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
+ * 联动父RV的适配器。
+ *
  * Create by KunMinX at 19/4/29
  */
 public class LinkagePrimaryAdapter extends RecyclerView.Adapter<LinkagePrimaryViewHolder> {
 
+    /** 父RV数据。 */
     private List<String> mStrings;
     private Context mContext;
     private View mView;
+    /** 选择的位置。 */
     private int mSelectedPosition;
-
+    /** 父适配器的配置。 */
     private ILinkagePrimaryAdapterConfig mConfig;
+    /** 父联动的监听器。 */
     private OnLinkageListener mLinkageListener;
+
 
     public List<String> getStrings() {
         return mStrings;
@@ -93,7 +99,7 @@ public class LinkagePrimaryAdapter extends RecyclerView.Adapter<LinkagePrimaryVi
         // for textView MARQUEE available.
         holder.mLayout.setSelected(true);
 
-        final int adapterPosition = holder.getBindingAdapterPosition();
+        final int adapterPosition = holder.getBindingAdapterPosition();//绝对的位置。
         final String title = mStrings.get(adapterPosition);
 
         mConfig.onBindViewHolder(holder, adapterPosition == mSelectedPosition, title);
@@ -114,11 +120,22 @@ public class LinkagePrimaryAdapter extends RecyclerView.Adapter<LinkagePrimaryVi
         return mStrings.size();
     }
 
+
     /**
+     * 父联动的监听器。
+     *
      * only for linkage logic of level primary adapter. not use for outside logic
      * users can archive onLinkageClick in configs instead.
+     * 仅用于级别为主适配器的链接逻辑。 不用于外部逻辑的用户可以改为在配置中存档onLinkageClick。
      */
     public interface OnLinkageListener {
+
+        /**
+         * 点击回调(链接)。
+         *
+         * @param holder 父RV的Holder。
+         * @param title 点击的父RV标题。
+         */
         void onLinkageClick(LinkagePrimaryViewHolder holder, String title);
     }
 }

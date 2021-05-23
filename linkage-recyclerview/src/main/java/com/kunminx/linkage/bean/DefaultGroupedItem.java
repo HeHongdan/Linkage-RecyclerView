@@ -18,6 +18,8 @@ package com.kunminx.linkage.bean;
 
 
 /**
+ * 默认父(组)Item。
+ *
  * Create by KunMinX at 19/4/27
  */
 public class DefaultGroupedItem extends BaseGroupedItem<DefaultGroupedItem.ItemInfo> {
@@ -30,14 +32,32 @@ public class DefaultGroupedItem extends BaseGroupedItem<DefaultGroupedItem.ItemI
         super(item);
     }
 
+
+
+    /**
+     * 默认的子RV的Item信息。
+     */
     public static class ItemInfo extends BaseGroupedItem.ItemInfo {
+
         private String content;
 
+        /**
+         * 默认的子RV的Item信息。
+         *
+         * @param title 标题。
+         * @param group 组标题(内容)。
+         * @param content
+         */
         public ItemInfo(String title, String group, String content) {
             super(title, group);
             this.content = content;
         }
 
+        /**
+         *
+         * @param title
+         * @param group 组标题(内容)。
+         */
         public ItemInfo(String title, String group) {
             super(title, group);
         }

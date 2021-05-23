@@ -23,6 +23,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
+ * 基ViewHolder。
+ *
  * Create by KunMinX at 19/5/15
  */
 public class BaseViewHolder extends RecyclerView.ViewHolder {

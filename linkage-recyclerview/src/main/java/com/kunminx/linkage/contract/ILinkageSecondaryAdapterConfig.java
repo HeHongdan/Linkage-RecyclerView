@@ -24,11 +24,14 @@ import com.kunminx.linkage.adapter.viewholder.LinkageSecondaryViewHolder;
 import com.kunminx.linkage.bean.BaseGroupedItem;
 
 /**
+ * 链接子Adapter的配置。
+ *
  * Create by KunMinX at 19/5/8
  */
 public interface ILinkageSecondaryAdapterConfig<T extends BaseGroupedItem.ItemInfo> {
 
     /**
+     * 设置上下文。
      * setContext
      *
      * @param context context
@@ -50,6 +53,7 @@ public interface ILinkageSecondaryAdapterConfig<T extends BaseGroupedItem.ItemIn
     int getLinearLayoutId();
 
     /**
+     * 获取子RV顶部的标题布局容器资源ID(一般是父内容)。
      * get header layout res id
      * <p>
      * Note: Secondary adapter's Header and HeaderView must share the same set of views
@@ -69,6 +73,7 @@ public interface ILinkageSecondaryAdapterConfig<T extends BaseGroupedItem.ItemIn
     int getFooterLayoutId();
 
     /**
+     * 获取子RV顶部标题(一般父内容)。
      * get the id of textView for bind title of HeaderView
      * <p>
      * Note: Secondary adapter's Header and HeaderView must share the same set of views
@@ -78,7 +83,10 @@ public interface ILinkageSecondaryAdapterConfig<T extends BaseGroupedItem.ItemIn
     int getHeaderTextViewId();
 
     /**
+     * 获取列数(Grid模式)。
      * get SpanCount of grid mode
+     *
+     * @return 列数。
      */
     int getSpanCountOfGridMode();
 

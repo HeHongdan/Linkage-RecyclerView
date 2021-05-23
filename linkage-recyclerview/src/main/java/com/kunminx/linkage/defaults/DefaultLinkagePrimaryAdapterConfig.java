@@ -18,7 +18,6 @@ package com.kunminx.linkage.defaults;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -29,20 +28,32 @@ import com.kunminx.linkage.adapter.viewholder.LinkagePrimaryViewHolder;
 import com.kunminx.linkage.contract.ILinkagePrimaryAdapterConfig;
 
 /**
+ * 默认：父适配器配置。
+ *
  * Create by KunMinX at 19/5/8
  */
 public class DefaultLinkagePrimaryAdapterConfig implements ILinkagePrimaryAdapterConfig {
 
     private static final int MARQUEE_REPEAT_LOOP_MODE = -1;
     private static final int MARQUEE_REPEAT_NONE_MODE = 0;
-    private Context mContext;
-    private OnPrimaryItemBindListener mListener;
-    private OnPrimaryItemClickListner mClickListner;
 
+    /** 上下文。 */
+    private Context mContext;
+    /** 父Item绑定的事件。 */
+    private OnPrimaryItemBindListener mListener;
+    /** 父Item点击的事件。 */
+    private OnPrimaryItemClickListner mClickListener;
+
+    /**
+     * 设置父监听器。
+     *
+     * @param listener 父Item绑定的事件。
+     * @param clickListener 父Item点击的事件。
+     */
     public void setListener(OnPrimaryItemBindListener listener,
-                            OnPrimaryItemClickListner clickListner) {
+                            OnPrimaryItemClickListner clickListener) {
         mListener = listener;
-        mClickListner = clickListner;
+        mClickListener = clickListener;
     }
 
     @Override
@@ -75,6 +86,7 @@ public class DefaultLinkagePrimaryAdapterConfig implements ILinkagePrimaryAdapte
         tvTitle.setEllipsize(selected ? TextUtils.TruncateAt.MARQUEE : TextUtils.TruncateAt.END);
         tvTitle.setFocusable(selected);
         tvTitle.setFocusableInTouchMode(selected);
+        //跑马灯效果
         tvTitle.setMarqueeRepeatLimit(selected ? MARQUEE_REPEAT_LOOP_MODE : MARQUEE_REPEAT_NONE_MODE);
 
         if (mListener != null) {
@@ -84,14 +96,20 @@ public class DefaultLinkagePrimaryAdapterConfig implements ILinkagePrimaryAdapte
 
     @Override
     public void onItemClick(LinkagePrimaryViewHolder holder, View view, String title) {
-        if (mClickListner != null) {
-            mClickListner.onItemClick(holder, view, title);
+        if (mClickListener != null) {
+            mClickListener.onItemClick(holder, view, title);
         }
     }
 
+
+
+    /**
+     * 父Item点击的事件。
+     */
     public interface OnPrimaryItemClickListner {
         /**
          * we suggest you get position by holder.getAdapterPosition
+         * 我们建议您通过holder.getAdapterPosition获取位置。
          *
          * @param holder primaryHolder
          * @param view   view
@@ -100,13 +118,17 @@ public class DefaultLinkagePrimaryAdapterConfig implements ILinkagePrimaryAdapte
         void onItemClick(LinkagePrimaryViewHolder holder, View view, String title);
     }
 
+    /**
+     * 父Item绑定的事件。
+     */
     public interface OnPrimaryItemBindListener {
         /**
          * Note: Please do not override rootView click listener in here, because of linkage selection rely on it.
          * and we suggest you get position by holder.getAdapterPosition
+         * 请不要在此处覆盖rootView click监听器，因为链接选择依赖它。 我们建议您通过holder.getAdapterPosition获取位置。
          *
-         * @param primaryHolder primaryHolder
-         * @param title         groupTitle
+         * @param primaryHolder primaryHolder 父Holder。
+         * @param title         groupTitle 父(组)的标题。
          */
         void onBindViewHolder(LinkagePrimaryViewHolder primaryHolder, String title);
     }

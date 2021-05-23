@@ -29,16 +29,31 @@ import com.kunminx.linkage.bean.DefaultGroupedItem;
 import com.kunminx.linkage.contract.ILinkageSecondaryAdapterConfig;
 
 /**
+ * 默认：子适配器配置。
+ *
  * Create by KunMinX at 19/5/8
  */
 public class DefaultLinkageSecondaryAdapterConfig implements ILinkageSecondaryAdapterConfig<DefaultGroupedItem.ItemInfo> {
 
+    /** 上下文。 */
     private Context mContext;
+    /** 子Item绑定的事件。 */
     private OnSecondaryItemBindListener mItemBindListener;
+    /** 头部绑定的事件。 */
     private OnSecondaryHeaderBindListener mHeaderBindListener;
+    /** (页)脚部绑定的事件。 */
     private OnSecondaryFooterBindListener mFooterBindListener;
+    /** 列数。 */
     private static final int SPAN_COUNT = 3;
 
+
+    /**
+     * 设置子Item的监听器。
+     *
+     * @param itemBindListener 子Item绑定的事件。
+     * @param headerBindListener 头部绑定的事件。
+     * @param footerBindListener (页)脚部绑定的事件。
+     */
     public void setItemBindListener(OnSecondaryItemBindListener itemBindListener,
                                     OnSecondaryHeaderBindListener headerBindListener,
                                     OnSecondaryFooterBindListener footerBindListener) {
@@ -115,34 +130,46 @@ public class DefaultLinkageSecondaryAdapterConfig implements ILinkageSecondaryAd
         }
     }
 
+    /**
+     * 子Item绑定的事件。
+     */
     public interface OnSecondaryItemBindListener {
         /**
          * we suggest you get position by holder.getAdapterPosition
+         * 我们建议您通过holder.getAdapterPosition获取位置。
          *
-         * @param secondaryHolder
-         * @param item
+         * @param secondaryHolder 子 Holder。
+         * @param item 子 Item。
          */
         void onBindViewHolder(LinkageSecondaryViewHolder secondaryHolder,
                               BaseGroupedItem<DefaultGroupedItem.ItemInfo> item);
     }
 
+    /**
+     * 头部绑定的事件。
+     */
     public interface OnSecondaryHeaderBindListener {
         /**
          * we suggest you get position by holder.getAdapterPosition
+         * 我们建议您通过holder.getAdapterPosition获取位置。
          *
-         * @param headerHolder
-         * @param item
+         * @param headerHolder (子RV)头部 Holder。
+         * @param item (子RV)头部 Item。
          */
         void onBindHeaderViewHolder(LinkageSecondaryHeaderViewHolder headerHolder,
                                     BaseGroupedItem<DefaultGroupedItem.ItemInfo> item);
     }
 
+    /**
+     * (页)脚部绑定的事件。
+     */
     public interface OnSecondaryFooterBindListener {
         /**
          * we suggest you get position by holder.getAdapterPosition
+         * 我们建议您通过holder.getAdapterPosition获取位置。
          *
-         * @param footerHolder
-         * @param item
+         * @param footerHolder (页)脚的 Holder。
+         * @param item (页)脚的 Item。
          */
         void onBindFooterViewHolder(LinkageSecondaryFooterViewHolder footerHolder,
                                     BaseGroupedItem<DefaultGroupedItem.ItemInfo> item);

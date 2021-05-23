@@ -19,14 +19,19 @@ package com.kunminx.linkage.bean;
 import java.io.Serializable;
 
 /**
+ * 父(组)Item基类。
+ *
  * items which support grouped
  * <p>
  * Create by KunMinX at 19/4/29
  */
 public abstract class BaseGroupedItem<T extends BaseGroupedItem.ItemInfo> implements Serializable {
+
+    /** 是否(子)RV顶部标题(一般填父内容)。 */
     public boolean isHeader;
-    public T info;
+    /** (子)RV顶部标题(一般填父内容)文本。 */
     public String header;
+    public T info;
 
     public BaseGroupedItem(boolean isHeader, String header) {
         this.isHeader = isHeader;
@@ -40,8 +45,14 @@ public abstract class BaseGroupedItem<T extends BaseGroupedItem.ItemInfo> implem
         this.info = info;
     }
 
+    /**
+     * 父(组)Item数据的基类型。
+     */
     public static class ItemInfo implements Serializable {
+
+        /** 组的标题(一般为父的内容)。 */
         private String group;
+        /** 组的标题(一般为父的内容)。 */
         private String title;
 
         public ItemInfo(String title, String group) {

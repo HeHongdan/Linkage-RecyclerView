@@ -45,6 +45,7 @@ import java.util.List;
 public class DialogSampleFragment extends Fragment {
 
     private FragmentDialogBinding mBinding;
+    /** 警示框的默认高度。 */
     private static float DIALOG_HEIGHT = 400;
     private AlertDialog mDialog;
 

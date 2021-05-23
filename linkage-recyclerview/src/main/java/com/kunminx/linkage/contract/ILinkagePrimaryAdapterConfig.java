@@ -22,12 +22,15 @@ import android.view.View;
 import com.kunminx.linkage.adapter.viewholder.LinkagePrimaryViewHolder;
 
 /**
+ * 链接父Adapter的配置。
+ *
  * Create by KunMinX at 19/5/8
  */
 public interface ILinkagePrimaryAdapterConfig {
 
     /**
-     * setContext
+     * setContext.
+     * 设置上下文。
      *
      * @param context context
      */
@@ -35,22 +38,25 @@ public interface ILinkagePrimaryAdapterConfig {
 
     /**
      * get layout res id
+     * 获取父布局的资源ID。
      *
-     * @return layout res id
+     * @return layout res id. 父容器的ID。
      */
     int getLayoutId();
 
     /**
      * get textView id of layout
+     * 获取显示父内容的文本控件。
      *
-     * @return textView id of layout
+     * @return textView id of layout. 父内容的文本控件。
      */
     int getGroupTitleViewId();
 
     /**
      * get rootView id of layout
+     * 获取父布局的容器ID。
      *
-     * @return rootView id of layout
+     * @return rootView id of layout.取父布局的容器ID。
      */
     int getRootViewId();
 
@@ -63,19 +69,26 @@ public interface ILinkagePrimaryAdapterConfig {
      * <p>
      * and we suggest you get position by holder.getAdapterPosition
      *
-     * @param holder   LinkagePrimaryViewHolder
-     * @param title    title of this position
-     * @param selected selected of this position
+     * 在外部实现onBindViewHolder逻辑
+     * <p>
+     *     注意：请勿在onBindViewHolder中设置setOnClickListener，而可以在方法'ILinkagePrimaryAdapterConfig.onItemSelected（）'或'LinkageRecyclerView.OnPrimaryItemClickListener.onItemClick（）'中处理项目单击。
+     * <p>
+     *     我们建议您通过holder.getAdapterPosition获取位置。
+     *
+     * @param holder   LinkagePrimaryViewHolder.链接父的ViewHolder。
+     * @param title    title of this position. 父RV内容。
+     * @param selected selected of this position. 选择的位置。
      */
     void onBindViewHolder(LinkagePrimaryViewHolder holder, boolean selected, String title);
 
     /**
      * on primary item clicked
      * and we suggest you get position by holder.getAdapterPosition
+     * 在单击的父项目上，我们建议您通过holder.getAdapterPosition获得位置。
      *
-     * @param holder LinkagePrimaryViewHolder
-     * @param view   itemView
-     * @param title  title of primary item
+     * @param holder LinkagePrimaryViewHolder. 链接父的ViewHolder。
+     * @param view   itemView. 父Item的容器。
+     * @param title  title of primary item. 父RV内容。
      */
     void onItemClick(LinkagePrimaryViewHolder holder, View view, String title);
 }

@@ -1,0 +1,50 @@
+[
+    {
+        "header": "优惠",
+        "isHeader": true
+    },
+    {
+        "isHeader": false,
+        "info": {
+            "content": "好吃的食物，增肥神器，有求必应n月售10008 好评率100%",
+            "group": "优惠",
+            "imgUrl": "https://upload-images.jianshu.io/upload_images/57036-7d50230a36c40a94.png",
+            "title": "全家桶"
+        }
+    },
+    {
+        "header": "套餐",
+        "isHeader": true
+    },
+    {
+        "isHeader": false,
+        "info": {
+            "content": "好吃的食物，增肥神器，有求必应n月售10008 好评率100%",
+            "group": "套餐",
+            "imgUrl": "https://upload-images.jianshu.io/upload_images/57036-7d50230a36c40a94.png",
+            "title": "全家桶"
+        }
+    },
+    {
+        "header": "主食",
+        "isHeader": true
+    },
+    {
+        "isHeader": false,
+        "info": {
+            "content": "好吃的食物，增肥神器，有求必应n月售10008 好评率100%",
+            "group": "主食",
+            "imgUrl": "https://upload-images.jianshu.io/upload_images/57036-7d50230a36c40a94.png",
+            "title": "全家桶"
+        }
+    },
+    {
+        "isHeader": false,
+        "info": {
+            "content": "好吃的食物，增肥神器，有求必应n月售10008 好评率100%",
+            "group": "主食",
+            "imgUrl": "https://upload-images.jianshu.io/upload_images/57036-2c0645f9b1a588de.png",
+            "title": "可乐"
+        }
+    }
+]

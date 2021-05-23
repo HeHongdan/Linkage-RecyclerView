@@ -41,13 +41,15 @@ import java.util.List;
 public class LinkageSecondaryAdapter<T extends BaseGroupedItem.ItemInfo> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
+    /** 子RV的数据集合。 */
     private List<BaseGroupedItem<T>> mItems;
     private static final int IS_HEADER = 0;
     private static final int IS_LINEAR = 1;
     private static final int IS_GRID = 2;
     private static final int IS_FOOTER = 3;
+    /** 是否Grid布局模式。 */
     private boolean mIsGridMode;
-
+    /** 子RV适配器的配置。 */
     private ILinkageSecondaryAdapterConfig mConfig;
 
     public ILinkageSecondaryAdapterConfig getConfig() {
@@ -58,6 +60,11 @@ public class LinkageSecondaryAdapter<T extends BaseGroupedItem.ItemInfo> extends
         return mItems;
     }
 
+    /**
+     * 是否为网格模式。
+     *
+     * @return 是否网格模式。
+     */
     public boolean isGridMode() {
         return mIsGridMode && mConfig.getGridLayoutId() != 0;
     }

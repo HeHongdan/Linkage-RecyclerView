@@ -54,34 +54,57 @@ import java.util.List;
  */
 public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends ConstraintLayout {
 
+    /** (子RV)列数。 */
     private static final int DEFAULT_SPAN_COUNT = 1;
+    /** (滑动)定位到指定(置顶)项。 */
     private static final int SCROLL_OFFSET = 0;
+    /** 标记：父RV(分割线)。 */
     public static final int FOR_PRIMARY = 1;
+    /** 标记：子RV(分割线)。 */
     public static final int FOR_SECONDARY = 2;
 
-    private Context mContext;
 
+    /** 整个视图控件。 */
     private View mView;
+    /** 父RV。 */
     private RecyclerView mRvPrimary;
+    /** 子RV。 */
     private RecyclerView mRvSecondary;
-
+    /** 父适配器。 */
     private LinkagePrimaryAdapter mPrimaryAdapter;
+    /** 子适配器。 */
     private LinkageSecondaryAdapter mSecondaryAdapter;
+    /** (子)RV顶部(组)标题(一般为父的内容)文本。 */
     private TextView mTvHeader;
+    /** (子)头部视图的容器。 */
     private FrameLayout mHeaderContainer;
+    /** (子)头部视图的布局(放到容器中)。 */
     private View mHeaderLayout;
 
-    private List<String> mInitGroupNames;
-    private List<BaseGroupedItem<T>> mInitItems;
-
-    private final List<Integer> mHeaderPositions = new ArrayList<>();
+    /** (子)头部视图容器的高度。 */
     private int mTitleHeight;
-    private int mFirstVisiblePosition;
-    private String mLastGroupName;
-    private LinearLayoutManager mSecondaryLayoutManager;
+    /** 父RV布局管理器。 */
     private LinearLayoutManager mPrimaryLayoutManager;
-    private boolean mScrollSmoothly = true;
+    /** 子RV布局管理器。 */
+    private LinearLayoutManager mSecondaryLayoutManager;
+    /** 父数据在子RV中位置的集合。 */
+    private final List<Integer> mHeaderPositions = new ArrayList<>();
+    /** 父数据集合。 */
+    private List<String> mInitGroupNames;
+    /** 子(包含父)RV的数据集合。 */
+    private List<BaseGroupedItem<T>> mInitItems;
+    /** (子)第一个控件项位置。 */
+    private int mFirstVisiblePosition;
+    /** 最后的(子)RV顶部(组)标题(一般为父的内容)文本。 */
+    private String mLastGroupName;
+    /** 是否已响应(父)点击事件，区别自动还是点击选取。 */
     private boolean mPrimaryClicked = false;
+    /** 是否平滑滑动。 */
+    private boolean mScrollSmoothly = true;
+    /** 上下文。 */
+    private Context mContext;
+
+
 
     public LinkageRecyclerView(Context context) {
         super(context);
@@ -104,11 +127,14 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
         mHeaderContainer = (FrameLayout) mView.findViewById(R.id.header_container);
     }
 
+    /**
+     * 设置子RV的布局管理器(Linear 或 Grid)。
+     */
     private void setLevel2LayoutManager() {
         if (mSecondaryAdapter.isGridMode()) {
             mSecondaryLayoutManager = new GridLayoutManager(mContext,
                     mSecondaryAdapter.getConfig().getSpanCountOfGridMode());
-            ((GridLayoutManager) mSecondaryLayoutManager).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            ((GridLayoutManager) mSecondaryLayoutManager).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {//https://www.jianshu.com/p/b61c28ab2f24
                 @Override
                 public int getSpanSize(int position) {
                     //for header and footer
@@ -124,6 +150,12 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
         mRvSecondary.setLayoutManager(mSecondaryLayoutManager);
     }
 
+    /**
+     * 设置父、子RV。
+     *
+     * @param primaryAdapterConfig 父适配器的配置。
+     * @param secondaryAdapterConfig 子适配器的配置。
+     */
     private void initRecyclerView(ILinkagePrimaryAdapterConfig primaryAdapterConfig,
                                   ILinkageSecondaryAdapterConfig secondaryAdapterConfig) {
 
@@ -132,10 +164,12 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
                     @Override
                     public void onLinkageClick(LinkagePrimaryViewHolder holder, String title) {
                         if (isScrollSmoothly()) {
+                            //平滑滑动
                             RecyclerViewScrollHelper.smoothScrollToPosition(mRvSecondary,
                                     LinearSmoothScroller.SNAP_TO_START,
                                     mHeaderPositions.get(holder.getBindingAdapterPosition()));
                         } else {
+                            //定位到指定项//https://www.jianshu.com/p/3acc395ae933
                             mSecondaryLayoutManager.scrollToPositionWithOffset(
                                     mHeaderPositions.get(holder.getBindingAdapterPosition()), SCROLL_OFFSET);
                         }
@@ -153,9 +187,13 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
         mRvSecondary.setAdapter(mSecondaryAdapter);
     }
 
+    /**
+     * 初始化联动子(次要)。
+     */
     private void initLinkageSecondary() {
 
         // Note: headerLayout is shared by both SecondaryAdapter's header and HeaderView
+        // headerLayout由SecondaryAdapter的头部和HeaderView共享
 
         if (mTvHeader == null && mSecondaryAdapter.getConfig() != null) {
             ILinkageSecondaryAdapterConfig config = mSecondaryAdapter.getConfig();
@@ -181,17 +219,21 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
+                //第一个可见的位置
                 int firstPosition = mSecondaryLayoutManager.findFirstVisibleItemPosition();
+                //第一个(已)可见的位置//https://blog.csdn.net/agf81596/article/details/101471082
                 int firstCompletePosition = mSecondaryLayoutManager.findFirstCompletelyVisibleItemPosition();
                 List<BaseGroupedItem<T>> items = mSecondaryAdapter.getItems();
 
                 // Here is the logic of the sticky:
-
+                // 下面是粘性的逻辑
                 if (firstCompletePosition > 0 && (firstCompletePosition) < items.size()
                         && items.get(firstCompletePosition).isHeader) {
 
+                    //第一个(已)可见位置的Item视图
                     View view = mSecondaryLayoutManager.findViewByPosition(firstCompletePosition);
                     if (view != null && view.getTop() <= mTitleHeight) {
+                        //Y轴位移
                         mHeaderContainer.setY(view.getTop() - mTitleHeight);
                     }
                 } else {
@@ -199,13 +241,15 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
                 }
 
                 // Here is the logic of group title changes and linkage:
+                // (组)标题更改和链接的逻辑
 
+                // (组)标题是否更改
                 boolean groupNameChanged = false;
 
+                //判断第一个fei子RV的Item(是标题)
                 if (mFirstVisiblePosition != firstPosition && firstPosition >= 0) {
-
                     if (mFirstVisiblePosition < firstPosition) {
-                        mHeaderContainer.setY(0);
+                        mHeaderContainer.setY(0);//纠正位置(拉回屏幕内部)
                     }
 
                     mFirstVisiblePosition = firstPosition;
@@ -228,6 +272,9 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
                 // To avoid to this extreme situation, my idea is to add a footer on the bottom,
                 // to help wholly execute this logic.
                 //
+                //下面的逻辑不可能完美，因为tvHeader的标题可能并不总是等于所选primaryItem的标题，而有几个组几乎没有项目可以将group item粘贴到tvHeader。
+                //为了避免这种极端情况，我的想法是在底部添加一个页脚，以帮助完全执行这个逻辑。
+
                 // Note: 2019.5.22 KunMinX
 
                 if (groupNameChanged) {
@@ -250,17 +297,13 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
         });
     }
 
-    private int dpToPx(Context context, float dp) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        return (int) ((dp * displayMetrics.density) + 0.5f);
-    }
-
     /**
      * init LinkageRV by items and configs
+     * 按项目和配置初始化LinkageRV。
      *
-     * @param linkageItems
-     * @param primaryAdapterConfig
-     * @param secondaryAdapterConfig
+     * @param linkageItems Json数据(含父、子)。
+     * @param primaryAdapterConfig 父适配器配置。
+     * @param secondaryAdapterConfig 子适配器配置。
      */
     public void init(List<BaseGroupedItem<T>> linkageItems,
                      ILinkagePrimaryAdapterConfig primaryAdapterConfig,
@@ -272,15 +315,17 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
 
         String lastGroupName = null;
         List<String> groupNames = new ArrayList<>();
+        // 筛选出父RV的Item的数据
         if (mInitItems != null && mInitItems.size() > 0) {
-            for (BaseGroupedItem<T> item1 : mInitItems) {
-                if (item1.isHeader) {
-                    groupNames.add(item1.header);
-                    lastGroupName = item1.header;
+            for (BaseGroupedItem<T> item : mInitItems) {
+                if (item.isHeader) {
+                    groupNames.add(item.header);
+                    lastGroupName = item.header;
                 }
             }
         }
 
+        // 收集父数据(标题)在子RV中的位置
         if (mInitItems != null) {
             for (int i = 0; i < mInitItems.size(); i++) {
                 if (mInitItems.get(i).isHeader) {
@@ -290,6 +335,7 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
         }
 
         DefaultGroupedItem.ItemInfo info = new DefaultGroupedItem.ItemInfo(null, lastGroupName);
+        // 页脚(占空间用的)
         BaseGroupedItem<T> footerItem = (BaseGroupedItem<T>) new DefaultGroupedItem(info);
         mInitItems.add(footerItem);
 
@@ -300,9 +346,10 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
     }
 
     /**
-     * simplify init by only items and default configs
+     * simplify init by only items and default configs。
+     * 仅通过项目和默认配置简化初始化。
      *
-     * @param linkageItems
+     * @param linkageItems Json数据(含父、子)。
      */
     public void init(List<BaseGroupedItem<T>> linkageItems) {
         init(linkageItems, new DefaultLinkagePrimaryAdapterConfig(), new DefaultLinkageSecondaryAdapterConfig());
@@ -310,24 +357,27 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
 
     /**
      * bind listeners for primary or secondary adapter
+     * 绑定主适配器或辅助适配器的(点击、绑定)侦听器。
      *
-     * @param primaryItemClickListner
-     * @param primaryItemBindListener
-     * @param secondaryItemBindListener
-     * @param headerBindListener
-     * @param footerBindListener
+     * @param primaryItemClickListener 父Item点击的事件。
+     * @param primaryItemBindListener 父Item绑定的事件。
+     * @param secondaryItemBindListener 子Item绑定的事件。
+     * @param headerBindListener 头部绑定的事件。
+     * @param footerBindListener (页)脚部绑定的事件。
      */
     public void setDefaultOnItemBindListener(
-            DefaultLinkagePrimaryAdapterConfig.OnPrimaryItemClickListner primaryItemClickListner,
+            DefaultLinkagePrimaryAdapterConfig.OnPrimaryItemClickListner primaryItemClickListener,
             DefaultLinkagePrimaryAdapterConfig.OnPrimaryItemBindListener primaryItemBindListener,
             DefaultLinkageSecondaryAdapterConfig.OnSecondaryItemBindListener secondaryItemBindListener,
             DefaultLinkageSecondaryAdapterConfig.OnSecondaryHeaderBindListener headerBindListener,
             DefaultLinkageSecondaryAdapterConfig.OnSecondaryFooterBindListener footerBindListener) {
 
+        //设置父(点击、绑定)侦听器。
         if (mPrimaryAdapter.getConfig() != null) {
             ((DefaultLinkagePrimaryAdapterConfig) mPrimaryAdapter.getConfig())
-                    .setListener(primaryItemBindListener, primaryItemClickListner);
+                    .setListener(primaryItemBindListener, primaryItemClickListener);
         }
+        //设置子(点击、绑定)侦听器。
         if (mSecondaryAdapter.getConfig() != null) {
             ((DefaultLinkageSecondaryAdapterConfig) mSecondaryAdapter.getConfig())
                     .setItemBindListener(secondaryItemBindListener, headerBindListener, footerBindListener);
@@ -336,6 +386,7 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
 
     /**
      * custom linkageRV width in some scene like dialog
+     * 在某些场景（如对话框）中自定义的RV高度。
      *
      * @param dp
      */
@@ -353,27 +404,41 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
      * <p>
      * Note 2021.1.20: this bug has been deal with in the newest version of RecyclerView
      *
-     * @param dp
+     * 自定义父列表宽度。
+     * <p>
+     *     这种设计的原因是：一级列表的宽度必须是一个准确的值，否则由于RecyclerView自身的错误，onBindViewHolder可能会被多次调用。
+     * <p>
+     * 注意2021.1.20：此错误已在最新版本的RecyclerView中解决。
+     *
+     * @param dp 宽度dp。
      */
     @Deprecated
     public void setPrimaryWidth(float dp) {
+        //父RV宽度。
         ViewGroup.LayoutParams lpLeft = mRvPrimary.getLayoutParams();
         lpLeft.width = dpToPx(getContext(), dp);
         mRvPrimary.setLayoutParams(lpLeft);
 
+        //子RV宽度。
         ViewGroup.LayoutParams lpRight = mRvSecondary.getLayoutParams();
         lpRight.width = ViewGroup.LayoutParams.MATCH_PARENT;
         mRvSecondary.setLayoutParams(lpRight);
     }
 
+    /**
+     * 是否为网格模式。
+     *
+     * @return 是否网格模式。
+     */
     public boolean isGridMode() {
         return mSecondaryAdapter.isGridMode();
     }
 
     /**
      * custom if secondary list is hope to be grid mode
+     * 如果希望将子列表设置为网格模式，则自定义。
      *
-     * @return
+     * @param isGridMode 是否网格模式。
      */
     public void setGridMode(boolean isGridMode) {
         mSecondaryAdapter.setGridMode(isGridMode);
@@ -381,45 +446,77 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
         mRvSecondary.requestLayout();
     }
 
+    /**
+     * (父)是否平滑滑动。
+     *
+     * @return 是否平滑滑动。
+     */
     public boolean isScrollSmoothly() {
         return mScrollSmoothly;
     }
 
     /**
      * custom if is hope to scroll smoothly while click primary item to linkage secondary list
+     * 如果希望在单击父要项目以链接次要列表时平滑滚动，请自定义。
      *
-     * @return
+     * @return 是否平滑滑动。
      */
     public void setScrollSmoothly(boolean scrollSmoothly) {
         this.mScrollSmoothly = scrollSmoothly;
     }
 
+    /**
+     * 获取父适配器。
+     *
+     * @return 父适配器。
+     */
     public LinkagePrimaryAdapter getPrimaryAdapter() {
         return mPrimaryAdapter;
     }
 
+    /**
+     * 获取子适配器。
+     *
+     * @return 子适配器。
+     */
     public LinkageSecondaryAdapter getSecondaryAdapter() {
         return mSecondaryAdapter;
     }
 
+    /**
+     * 父数据在子RV中位置的集合。
+     *
+     * @return 父数据位置的集合。
+     */
     public List<Integer> getHeaderPositions() {
         return mHeaderPositions;
     }
 
     /**
      * set percent of primary list and secondary list width
+     * 设置父列表和子列表宽度的百分比。
      *
-     * @param percent
+     * @param percent 百分比。
      */
     public void setPercent(float percent) {
         Guideline guideline = (Guideline) mView.findViewById(R.id.guideline);
         guideline.setGuidelinePercent(percent);
     }
 
+    /**
+     * 设置父列表背景色。
+     *
+     * @param color (父)背景色。
+     */
     public void setRvPrimaryBackground(int color) {
         mRvPrimary.setBackgroundColor(color);
     }
 
+    /**
+     * 设置子列表背景色。
+     *
+     * @param color (子)背景色。
+     */
     public void setRvSecondaryBackground(int color) {
         mRvSecondary.setBackgroundColor(color);
     }
@@ -430,9 +527,10 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
 
     /**
      * addItemDecoration for Primary or Secondary RecyclerView
+     * 添加父或子RecyclerView的分割线。
      *
-     * @param forPrimaryOrSecondary
-     * @param decoration
+     * @param forPrimaryOrSecondary 标记：子或父RV(分割线)。
+     * @param decoration 分割线。
      */
     public void addItemDecoration(int forPrimaryOrSecondary, RecyclerView.ItemDecoration decoration) {
         switch (forPrimaryOrSecondary) {
@@ -444,4 +542,12 @@ public class LinkageRecyclerView<T extends BaseGroupedItem.ItemInfo> extends Con
                 mRvSecondary.addItemDecoration(decoration);
         }
     }
+
+
+
+    private int dpToPx(Context context, float dp) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return (int) ((dp * displayMetrics.density) + 0.5f);
+    }
+
 }

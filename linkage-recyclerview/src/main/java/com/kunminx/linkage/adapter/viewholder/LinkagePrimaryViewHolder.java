@@ -23,12 +23,17 @@ import androidx.annotation.NonNull;
 import com.kunminx.linkage.contract.ILinkagePrimaryAdapterConfig;
 
 /**
+ * 父(组)RV的Holder。
+ *
  * Create by KunMinX at 19/5/15
  */
 public class LinkagePrimaryViewHolder extends BaseViewHolder {
 
+    /** 显示父内容的文本控件。 */
     public View mGroupTitle;
+    /** 父布局的容器ID。 */
     public View mLayout;
+    /** 链接父Adapter的配置。 */
     private ILinkagePrimaryAdapterConfig mConfig;
 
     public LinkagePrimaryViewHolder(@NonNull View itemView, ILinkagePrimaryAdapterConfig config) {
@@ -36,6 +41,7 @@ public class LinkagePrimaryViewHolder extends BaseViewHolder {
         mConfig = config;
         mGroupTitle = itemView.findViewById(mConfig.getGroupTitleViewId());
         //need bind root layout by users, because rootLayout may not viewGroup, which can not getChild(0).
+        //需要由用户绑定根布局，因为rootLayout可能不是viewGroup，而后者无法getChild（0）。
         mLayout = itemView.findViewById(mConfig.getRootViewId());
     }
 }
